@@ -1,0 +1,114 @@
+{% extends "includes/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="container my-5">
+
+        <h2 class="mb-4">Airport Route Dashboard</h2>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        Find Nth Node
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'nth-node' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="{{ form_nth.starting.id_for_label }}" class="form-label">Starting
+                                    Airport</label>
+                                {{ form_nth.starting|add_class:"form-select" }}
+                                {% for error in form_nth.starting.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form_nth.direction.id_for_label }}" class="form-label">Direction</label>
+                                {{ form_nth.direction|add_class:"form-select" }}
+                                {% for error in form_nth.direction.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form_nth.n.id_for_label }}" class="form-label">Steps (N)</label>
+                                {{ form_nth.n|add_class:"form-control" }}
+                                {% for error in form_nth.n.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Find</button>
+                        </form>
+
+                        {% if nth_node %}
+                            <div class="alert alert-success mt-3">
+                                <strong>Nth Node:</strong> {{ nth_node.code }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        Longest Path
+                    </div>
+                    <div class="card-body">
+                        {% if longest_path %}
+                            <p>
+                                <strong>Path:</strong>
+                                {% for airport in longest_path %}
+                                    {{ airport.code }}{% if not forloop.last %} → {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong>Duration:</strong> {{ longest_path_duration }}</p>
+                        {% else %}
+                            <p>No routes found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-warning">
+                        Shortest Path
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'short-path' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="{{ form_short_path.starting.id_for_label }}" class="form-label">Starting
+                                    Airport</label>
+                                {{ form_short_path.starting|add_class:"form-control" }}
+                                {% for error in form_short_path.starting.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form_short_path.end.id_for_label }}" class="form-label">Ending Airport</label>
+                                {{ form_short_path.end|add_class:"form-control" }}
+                                {% for error in form_short_path.end.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-warning btn-sm">Find</button>
+                        </form>
+
+                        {% if short_path %}
+                            <p class="mt-3">
+                                <strong>Path:</strong>
+                                {% for airport in short_path %}
+                                    {{ airport.code }}{% if not forloop.last %} → {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong>Duration:</strong> {{ short_path_duration }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "includes/base.html" %}
+{% block title %}Airports{% endblock %}
+
+{% block content %}
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Airports</h5>
+            <a href="{% url 'airport-create' %}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i> Add Airport
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th style="width: 60px;">#</th>
+                    <th>Code</th>
+                    <th style="width: 50px;"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for airport in airports %}
+                    <tr style="cursor: pointer;">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ airport.code }}</td>
+                        <td>
+                            <a href="{% url 'airport-update' pk=airport.id %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-3 text-muted">No airports found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
