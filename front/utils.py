@@ -4,6 +4,7 @@ from front.models import AirportModel, RouteModel
 
 
 def find_nth_node(start, direction, n):
+    """Find the nth airport in a specific direction from starting airport"""
     current_airport = AirportModel.objects.get(code=start)
 
     steps = 0
@@ -11,7 +12,7 @@ def find_nth_node(start, direction, n):
         try:
             route = RouteModel.objects.get(starting=current_airport, position=direction)
         except RouteModel.DoesNotExist:
-            return None
+            return None  # No route found in this direction
         current_airport = route.ending
         steps += 1
 
@@ -19,9 +20,11 @@ def find_nth_node(start, direction, n):
 
 
 def find_longest_path_from_airport():
+    """Find the longest possible path from the first airport using DFS"""
     start_airport = AirportModel.objects.first()
 
     def dfs(current_airport, duration=0, path=None):
+        """Depth-first search to explore all possible paths"""
         if path is None:
             path = [current_airport]
 
@@ -29,10 +32,11 @@ def find_longest_path_from_airport():
         routes = RouteModel.objects.filter(starting=current_airport)
 
         if not routes.exists():
-            return path, duration
+            return path, duration  # Dead end, return current path
 
         longest_path = (path, duration)
 
+        # Explore each possible route
         for route in routes:
             new_path, new_duration = dfs(
                 route.ending,
@@ -53,9 +57,11 @@ def find_longest_path_from_airport():
 
 
 def find_shortest_path(start, end):
+    """Find shortest path between two airports using Dijkstra's algorithm"""
     starting = AirportModel.objects.get(code=start)
     ending = AirportModel.objects.get(code=end)
 
+    # Priority queue: (duration, airport_id, airport, path)
     pq = [(0, starting.id, starting, [starting])]
     visited = set()
 
@@ -73,6 +79,7 @@ def find_shortest_path(start, end):
 
         visited.add(current_airport)
 
+        # Add all neighboring airports to queue
         for route in RouteModel.objects.filter(starting=current_airport):
             if route.ending not in visited:
                 heapq.heappush(
@@ -80,4 +87,4 @@ def find_shortest_path(start, end):
                     (duration + route.duration, route.ending.id, route.ending, path + [route.ending])
                 )
 
-    return None
+    return None  # No path found

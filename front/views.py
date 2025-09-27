@@ -5,9 +5,11 @@ from .utils import find_longest_path_from_airport, find_nth_node, find_shortest_
 
 
 class DashboardView(generic.TemplateView):
+    """Main dashboard displaying longest path and forms"""
     template_name = 'dashboard.html'
 
     def get_context_data(self, **kwargs):
+        """Add longest path data and forms to context"""
         context = super().get_context_data(**kwargs)
         longest_path = find_longest_path_from_airport()
         context.update({
@@ -20,10 +22,12 @@ class DashboardView(generic.TemplateView):
 
 
 class NthNodeFormView(generic.FormView, DashboardView):
+    """Handle nth node search form submission"""
     form_class = FindNthNodeForm
     template_name = "dashboard.html"
 
     def form_valid(self, form):
+        """Process nth node form and return results"""
         starting = form.cleaned_data.get('starting')
         direction = form.cleaned_data.get('direction')
         n = form.cleaned_data.get('n')
@@ -36,10 +40,12 @@ class NthNodeFormView(generic.FormView, DashboardView):
 
 
 class ShortestPathFormView(generic.FormView, DashboardView):
+    """Handle shortest path search form submission"""
     form_class = ShortPathForm
     template_name = "dashboard.html"
 
     def form_valid(self, form):
+        """Process shortest path form and return results"""
         starting = form.cleaned_data.get('starting')
         end = form.cleaned_data.get('end')
 
